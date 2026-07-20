@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>RUSLAN BRONZA</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --gold: #c8a84e;
+    --bg: #050508;
+  }
+
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    background: var(--bg);
+    font-family: 'Press Start 2P', monospace;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: pan-x;
+  }
+
+  canvas#nebula {
+    position: fixed;
+    inset: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 2;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2.5rem 2rem 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .container { padding: 1.8rem 1.2rem 1.2rem; }
+  }
+
+  .header { flex-shrink: 0; text-align: center; }
+
+  .title {
+    font-size: clamp(1rem, 3vw, 1.8rem);
+    color: var(--gold);
+    text-shadow:
+      0 0 6px rgba(200, 168, 78, 0.4),
+      0 0 18px rgba(200, 168, 78, 0.2),
+      0 0 40px rgba(200, 168, 78, 0.1);
+    letter-spacing: 0.5em;
+    animation: breathe 4s ease-in-out infinite;
+  }
+
+  @keyframes breathe {
+    0%, 100% {
+      text-shadow:
+        0 0 6px rgba(200, 168, 78, 0.4),
+        0 0 18px rgba(200, 168, 78, 0.2),
+        0 0 40px rgba(200, 168, 78, 0.1);
+    }
+    50% {
+      text-shadow:
+        0 0 10px rgba(200, 168, 78, 0.55),
+        0 0 28px rgba(200, 168, 78, 0.3),
+        0 0 60px rgba(200, 168, 78, 0.18);
+    }
+  }
+
+  .stage {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .card {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    opacity: 0;
+    transform: scale(0.92);
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+  }
+
+  .card.visible {
+    position: relative;
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+  }
+
+  .card.leaving-left {
+    opacity: 0;
+    transform: translateX(-60px) scale(0.92);
+  }
+
+  .card.leaving-right {
+    opacity: 0;
+    transform: translateX(60px) scale(0.92);
+  }
+
+  .card.entering-left {
+    opacity: 0;
+    transform: translateX(-60px) scale(0.92);
+  }
+
+  .card.entering-right {
+    opacity: 0;
+    transform: translateX(60px) scale(0.92);
+  }
+
+  .frame-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 320px;
+    aspect-ratio: 3 / 4;
+    transition: filter 0.7s;
+  }
+
+  @media (max-width: 768px) {
+    .frame-wrap { max-width: 250px; }
+  }
+
+  .frame {
+    position: absolute;
+    inset: -10px;
+    border: 2px solid rgba(200, 168, 78, 0.5);
+    box-shadow:
+      0 0 20px rgba(200, 168, 78, 0.12),
+      0 0 50px rgba(200, 168, 78, 0.05);
+    pointer-events: none;
+    transition: all 0.7s;
+  }
+
+  .card.visible .frame {
+    border-color: rgba(200, 168, 78, 0.6);
+    box-shadow:
+      0 0 30px rgba(200, 168, 78, 0.18),
+      0 0 70px rgba(200, 168, 78, 0.07),
+      0 0 120px rgba(200, 168, 78, 0.03);
+  }
+
+  .frame-wrap img {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: saturate(0.9) contrast(0.95);
+    transition: filter 0.7s;
+  }
+
+  .card.visible .frame-wrap img {
+    filter: saturate(1) contrast(1);
+  }
+
+  .inscription {
+    margin-top: 1.8rem;
+    text-align: center;
+    transition: opacity 0.7s, transform 0.7s;
+  }
+
+  .inscription .line {
+    font-size: 0.38rem;
+    color: #c8a84e;
+    text-shadow:
+      0 0 6px rgba(200, 168, 78, 0.35),
+      0 0 16px rgba(200, 168, 78, 0.12);
+    letter-spacing: 0.2em;
+    line-height: 2;
+    transition: all 0.5s;
+  }
+
+  .card.visible .inscription .line {
+    text-shadow:
+      0 0 10px rgba(200, 168, 78, 0.45),
+      0 0 24px rgba(200, 168, 78, 0.2);
+  }
+
+  .footer {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    opacity: 0.7;
+  }
+
+  .counter {
+    font-size: 0.26rem;
+    color: rgba(200, 168, 78, 0.4);
+    letter-spacing: 0.2em;
+  }
+
+  .arrows {
+    display: flex;
+    gap: 1.2rem;
+  }
+
+  .arrow {
+    background: none;
+    border: none;
+    color: rgba(200, 168, 78, 0.5);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.8rem;
+    cursor: pointer;
+    padding: 0.4rem 0.8rem;
+    transition: all 0.3s;
+    text-shadow: 0 0 6px rgba(200, 168, 78, 0.2);
+  }
+
+  .arrow:hover {
+    color: var(--gold);
+    text-shadow: 0 0 14px rgba(200, 168, 78, 0.5);
+  }
+
+  .arrow:active {
+    transform: scale(0.9);
+  }
+
+  @media (max-width: 768px) {
+    .footer { gap: 1rem; }
+  }
+</style>
+</head>
+<body>
+<canvas id="nebula"></canvas>
+
+<div class="container">
+  <header class="header">
+    <h1 class="title">RUSLAN BRONZA</h1>
+  </header>
+
+  <div class="stage" id="stage"></div>
+
+  <div class="footer">
+    <button class="arrow" id="prevBtn">&lt;</button>
+    <span class="counter" id="counter"></span>
+    <button class="arrow" id="nextBtn">&gt;</button>
+  </div>
+</div>
+
+<script>
+const inscriptions = [
+  'THE FIRST TO SEE THE PATTERN',
+  'BROKE THE IMPOSSIBLE IN HALF',
+  'TAUGHT MACHINES TO UNDERSTAND',
+  'BUILT THE INVISIBLE SCAPFOLD',
+  'FOUND SIGNAL IN THE NOISE',
+  'WROTE THE LANGUAGE OF GODS',
+  'TURNED CHAOS INTO STRUCTURE',
+  'ASSEMBLED THE NERVOUS SYSTEM OF EARTH',
+  'CHOSE FREEDOM OVER CONVENIENCE',
+  'WOVE A WEB ACROSS THE VOID',
+  'CONNECTED EVERY SOUL TO EVERY OTHER',
+  'DEFINED WHAT IT MEANS TO COMPUTE',
+  'PAINTED WORLDS WITH TRIANGLES',
+  'GAVE THE WEB A VOICE',
+  'MADE CODE FEEL LIKE POETRY',
+  'CRAFTED TOOLS THAT CRAFT TOOLS',
+  'LANDED ON THE MOON WITH 4KB',
+  'TAUGHT MACHINES TO SPEAK FIRST',
+  'WHISPERED ELEGANCE INTO SILICON',
+  'BUILDER OF DREAMS, DREAMER OF BUILDS',
+];
+
+const pictures = [
+  'photo_2026-07-20 23.03.56',
+  'photo_2026-07-20 23.03.57',
+  'photo_2026-07-20 23.03.58',
+  'photo_2026-07-20 23.03.59 (1)',
+  'photo_2026-07-20 23.03.59',
+  'photo_2026-07-20 23.04.00',
+  'photo_2026-07-20 23.04.01',
+  'photo_2026-07-20 23.04.02 (1)',
+  'photo_2026-07-20 23.04.02',
+  'photo_2026-07-20 23.04.03',
+  'photo_2026-07-20 23.04.04 (1)',
+  'photo_2026-07-20 23.04.04',
+  'photo_2026-07-20 23.04.06',
+  'photo_2026-07-20 23.04.07',
+  'photo_2026-07-20 23.04.08',
+  'photo_2026-07-20 23.04.09',
+  'photo_2026-07-20 23.04.10',
+  'photo_2026-07-20 23.04.11',
+  'photo_2026-07-20 23.04.12',
+  'photo_2026-07-20 23.04.13',
+];
+
+const stage = document.getElementById('stage');
+const counter = document.getElementById('counter');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+
+let currentIdx = 0;
+const cards = [];
+let transitioning = false;
+
+function createCard(i) {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `
+    <div class="frame-wrap">
+      <div class="frame"></div>
+      <img src="pictures/${pictures[i]}.jpeg" alt="" loading="lazy">
+    </div>
+    <div class="inscription">
+      <div class="line">${inscriptions[i]}</div>
+    </div>
+  `;
+  stage.appendChild(card);
+  cards.push(card);
+}
+
+for (let i = 0; i < pictures.length; i++) {
+  createCard(i);
+}
+
+function updateCounter() {
+  counter.textContent = `${currentIdx + 1} / ${pictures.length}`;
+}
+
+function goTo(targetIdx, dir) {
+  if (transitioning || targetIdx === currentIdx) return;
+  if (targetIdx < 0 || targetIdx >= pictures.length) return;
+  transitioning = true;
+
+  const oldCard = cards[currentIdx];
+  const newCard = cards[targetIdx];
+
+  oldCard.classList.remove('visible');
+  oldCard.classList.add(dir === 1 ? 'leaving-left' : 'leaving-right');
+
+  newCard.classList.remove('leaving-left', 'leaving-right', 'entering-left', 'entering-right');
+  newCard.classList.add(dir === 1 ? 'entering-right' : 'entering-left');
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      newCard.classList.remove('entering-left', 'entering-right');
+      newCard.classList.add('visible');
+    });
+  });
+
+  currentIdx = targetIdx;
+  updateCounter();
+
+  setTimeout(() => {
+    oldCard.classList.remove('leaving-left', 'leaving-right');
+    transitioning = false;
+  }, 700);
+}
+
+// make first card visible
+cards[0].classList.add('visible');
+updateCounter();
+
+// arrow buttons
+prevBtn.addEventListener('click', () => goTo(currentIdx - 1, -1));
+nextBtn.addEventListener('click', () => goTo(currentIdx + 1, 1));
+
+// keyboard
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(currentIdx + 1, 1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(currentIdx - 1, -1);
+});
+
+// mouse wheel
+let wheelAccum = 0;
+let wheelTimer = null;
+document.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  wheelAccum += e.deltaY + e.deltaX;
+  if (wheelTimer) clearTimeout(wheelTimer);
+  wheelTimer = setTimeout(() => {
+    if (Math.abs(wheelAccum) > 40) {
+      goTo(currentIdx + (wheelAccum > 0 ? 1 : -1), wheelAccum > 0 ? 1 : -1);
+    }
+    wheelAccum = 0;
+  }, 100);
+}, { passive: false });
+
+// touch swipe
+let touchStartX = 0;
+document.addEventListener('touchstart', (e) => {
+  touchStartX = e.touches[0].clientX;
+}, { passive: true });
+
+document.addEventListener('touchend', (e) => {
+  const diff = touchStartX - e.changedTouches[0].clientX;
+  if (Math.abs(diff) > 50) {
+    goTo(currentIdx + (diff > 0 ? 1 : -1), diff > 0 ? 1 : -1);
+  }
+});
+
+// nebula
+(() => {
+  const canvas = document.getElementById('nebula');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', () => { resize(); initStars(); });
+
+  function initStars() {
+    stars = [];
+    const count = Math.floor((canvas.width * canvas.height) / 1800);
+    for (let i = 0; i < count; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 1.1 + 0.3,
+        phase: Math.random() * Math.PI * 2,
+        speed: Math.random() * 0.005 + 0.002,
+        warm: Math.random() < 0.1,
+      });
+    }
+  }
+
+  initStars();
+
+  function draw() {
+    ctx.fillStyle = 'rgba(5, 5, 8, 0.15)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const ng = ctx.createRadialGradient(
+      canvas.width * 0.65, canvas.height * 0.35, 0,
+      canvas.width * 0.65, canvas.height * 0.35, canvas.width * 0.7
+    );
+    ng.addColorStop(0, 'rgba(25, 15, 45, 0.05)');
+    ng.addColorStop(0.5, 'rgba(15, 8, 35, 0.02)');
+    ng.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = ng;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    stars.forEach(s => {
+      s.phase += s.speed;
+      const alpha = 0.2 + Math.sin(s.phase) * 0.15 + 0.15;
+      const color = s.warm
+        ? `rgba(200, 168, 78, ${alpha * 1.1})`
+        : `rgba(190, 200, 220, ${alpha})`;
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+})();
+</script>
+</body>
+</html>
