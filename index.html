@@ -779,26 +779,26 @@
   /* AI Prompt Counter */
   .ai-counter-wrap {
     text-align: center;
-    padding: 0.5rem 0 0.2rem;
+    padding: 0.8rem 0 0.1rem;
     flex-shrink: 0;
   }
 
   .ai-counter-label {
     font-family: 'Press Start 2P', monospace;
-    font-size: 0.28rem;
+    font-size: 0.24rem;
     color: rgba(200, 168, 78, 0.3);
-    letter-spacing: 0.15em;
-    margin-bottom: 0.35rem;
+    letter-spacing: 0.12em;
+    margin-bottom: 0.3rem;
   }
 
   .ai-counter-number {
     font-family: 'Press Start 2P', monospace;
-    font-size: 1.1rem;
+    font-size: 0.9rem;
     color: var(--gold);
     text-shadow:
       0 0 8px rgba(200, 168, 78, 0.3),
       0 0 16px rgba(200, 168, 78, 0.15);
-    letter-spacing: 0.12em;
+    letter-spacing: 0.1em;
     transition: all 0.15s;
   }
 
@@ -817,8 +817,8 @@
   }
 
   @media (max-width: 768px) {
-    .ai-counter-number { font-size: 0.9rem; }
-    .ai-counter-label  { font-size: 0.24rem; }
+    .ai-counter-number { font-size: 0.75rem; }
+    .ai-counter-label  { font-size: 0.2rem; }
   }
 </style>
 </head>
@@ -917,10 +917,6 @@
         <div class="title-bar"></div>
       </div>
     </header>
-    <div class="ai-counter-wrap">
-      <div class="ai-counter-label">PROMPTS SENT TODAY</div>
-      <div class="ai-counter-number" id="aiPromptsCounter">0</div>
-    </div>
     <div class="stage" id="stage-ruslan"></div>
     <div class="footer">
       <button class="arrow prev-btn" aria-label="Previous">&lt;</button>
@@ -948,6 +944,10 @@
         <div class="title-bar"></div>
       </div>
     </header>
+    <div class="ai-counter-wrap">
+      <div class="ai-counter-label">PROMPTS SENT TODAY</div>
+      <div class="ai-counter-number" id="aiPromptsCounter">0</div>
+    </div>
     <div class="stage" id="stage-markian"></div>
     <div class="footer">
       <button class="arrow prev-btn" aria-label="Previous">&lt;</button>
@@ -1745,20 +1745,18 @@ requestAnimationFrame(animate);
    AI PROMPTS COUNTER — LIVE TICKER
    ═══════════════════════════════════════════ */
 (function () {
-  const el = document.getElementById('aiPromptsCounter');
+  var el = document.getElementById('aiPromptsCounter');
   if (!el) return;
 
-  const now = new Date();
-  const secondsSinceMidnight = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
-  const estimatedDaily = 40000 + Math.floor(Math.random() * 30000);
-  let count = Math.floor((secondsSinceMidnight / 86400) * estimatedDaily);
+  var count = 0;
+  var avgInterval = 30.5;
 
   function render() {
     el.textContent = count.toLocaleString();
   }
 
   function tick() {
-    count += 1 + Math.floor(Math.random() * 3);
+    count += 1;
     render();
     el.classList.add('tick');
     setTimeout(function () { el.classList.remove('tick'); }, 350);
@@ -1770,8 +1768,24 @@ requestAnimationFrame(animate);
     setTimeout(tick, delay);
   }
 
-  render();
-  schedule();
+  function initFromApi() {
+    fetch('/api/counter')
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (data && data.startTime) {
+          var elapsed = (Date.now() - data.startTime) / 1000;
+          count = Math.floor(elapsed / avgInterval);
+        }
+        render();
+        schedule();
+      })
+      .catch(function () {
+        render();
+        schedule();
+      });
+  }
+
+  initFromApi();
 })();
 </script>
 </body>
