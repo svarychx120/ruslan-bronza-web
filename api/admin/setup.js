@@ -1,4 +1,4 @@
-import redis from '../_redis.js';
+import redis from '../../lib/redis.js';
 import crypto from 'crypto';
 
 function hashPassword(password, salt) {

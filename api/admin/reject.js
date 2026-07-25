@@ -1,4 +1,4 @@
-import redis from '../_redis.js';
+import redis from '../../lib/redis.js';
 
 async function getAdminFromToken(req) {
   const cookies = req.headers.get('cookie') || '';
