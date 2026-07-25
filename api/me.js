@@ -1,32 +1,32 @@
-import redis from '../lib/redis.js';
+const redis = require('../lib/redis.js');
 
-export default async function handler(req) {
+module.exports = async function handler(req, res) {
   if (req.method !== 'GET') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405 });
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    const cookies = req.headers.get('cookie') || '';
+    const cookies = req.headers.cookie || '';
     const tokenMatch = cookies.match(/auth_token=([^;]+)/);
     const token = tokenMatch ? tokenMatch[1] : null;
 
     if (!token) {
-      return new Response(JSON.stringify({ authenticated: false }), { status: 401 });
+      return res.status(401).json({ authenticated: false });
     }
 
     const email = await redis.get(`token:${token}`);
     if (!email) {
-      return new Response(JSON.stringify({ authenticated: false }), { status: 401 });
+      return res.status(401).json({ authenticated: false });
     }
 
     const raw = await redis.get(`user:${email}`);
     if (!raw) {
-      return new Response(JSON.stringify({ authenticated: false }), { status: 401 });
+      return res.status(401).json({ authenticated: false });
     }
 
     const user = typeof raw === 'string' ? JSON.parse(raw) : raw;
 
-    return new Response(JSON.stringify({
+    return res.status(200).json({
       authenticated: true,
       user: {
         name: user.name,
@@ -36,11 +36,8 @@ export default async function handler(req) {
         status: user.status,
         tier: user.tier,
       },
-    }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
     });
   } catch (err) {
-    return new Response(JSON.stringify({ error: 'Server error' }), { status: 500 });
+    return res.status(500).json({ error: 'Server error' });
   }
-}
+};

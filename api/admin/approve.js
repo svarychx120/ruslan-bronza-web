@@ -1,7 +1,7 @@
-import redis from '../../lib/redis.js';
+const redis = require('../../lib/redis.js');
 
 async function getAdminFromToken(req) {
-  const cookies = req.headers.get('cookie') || '';
+  const cookies = req.headers.cookie || '';
   const tokenMatch = cookies.match(/auth_token=([^;]+)/);
   const token = tokenMatch ? tokenMatch[1] : null;
   if (!token) return null;
@@ -18,36 +18,33 @@ async function getAdminFromToken(req) {
   return user;
 }
 
-export default async function handler(req) {
+module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405 });
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
     const admin = await getAdminFromToken(req);
     if (!admin) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
+      return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const { email } = await req.json();
+    const { email } = req.body;
     if (!email) {
-      return new Response(JSON.stringify({ error: 'Email is required' }), { status: 400 });
+      return res.status(400).json({ error: 'Email is required' });
     }
 
     const raw = await redis.get(`user:${email.toLowerCase().trim()}`);
     if (!raw) {
-      return new Response(JSON.stringify({ error: 'User not found' }), { status: 404 });
+      return res.status(404).json({ error: 'User not found' });
     }
 
     const user = typeof raw === 'string' ? JSON.parse(raw) : raw;
     user.status = 'approved';
     await redis.set(`user:${email.toLowerCase().trim()}`, JSON.stringify(user));
 
-    return new Response(JSON.stringify({ message: 'User approved' }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return res.status(200).json({ message: 'User approved' });
   } catch (err) {
-    return new Response(JSON.stringify({ error: 'Server error' }), { status: 500 });
+    return res.status(500).json({ error: 'Server error' });
   }
-}
+};

@@ -1,24 +1,24 @@
-import redis from '../../lib/redis.js';
-import crypto from 'crypto';
+const redis = require('../../lib/redis.js');
+const crypto = require('crypto');
 
 function hashPassword(password, salt) {
   return crypto.createHash('sha256').update(password + salt).digest('hex');
 }
 
-export default async function handler(req) {
+module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405 });
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
     const alreadySet = await redis.get('admin_created');
     if (alreadySet) {
-      return new Response(JSON.stringify({ error: 'Admin already set up' }), { status: 409 });
+      return res.status(409).json({ error: 'Admin already set up' });
     }
 
-    const { email, password } = await req.json();
+    const { email, password } = req.body;
     if (!email || !password) {
-      return new Response(JSON.stringify({ error: 'Email and password are required' }), { status: 400 });
+      return res.status(400).json({ error: 'Email and password are required' });
     }
 
     const salt = crypto.randomBytes(16).toString('hex');
@@ -38,11 +38,8 @@ export default async function handler(req) {
 
     await redis.set('admin_created', true);
 
-    return new Response(JSON.stringify({ message: 'Admin account created successfully' }), {
-      status: 201,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return res.status(201).json({ message: 'Admin account created successfully' });
   } catch (err) {
-    return new Response(JSON.stringify({ error: 'Server error' }), { status: 500 });
+    return res.status(500).json({ error: 'Server error' });
   }
-}
+};

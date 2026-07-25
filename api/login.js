@@ -1,5 +1,5 @@
-import redis from '../lib/redis.js';
-import crypto from 'crypto';
+const redis = require('../lib/redis.js');
+const crypto = require('crypto');
 
 function hashPassword(password, salt) {
   return crypto.createHash('sha256').update(password + salt).digest('hex');
@@ -9,54 +9,46 @@ function generateToken() {
   return crypto.randomBytes(32).toString('hex');
 }
 
-export default async function handler(req) {
+module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405 });
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    const { email, password } = await req.json();
+    const { email, password } = req.body;
 
     if (!email || !password) {
-      return new Response(JSON.stringify({ error: 'Email and password are required' }), { status: 400 });
+      return res.status(400).json({ error: 'Email and password are required' });
     }
 
     const emailLower = email.toLowerCase().trim();
     const raw = await redis.get(`user:${emailLower}`);
 
     if (!raw) {
-      return new Response(JSON.stringify({ error: 'Invalid email or password' }), { status: 401 });
+      return res.status(401).json({ error: 'Invalid email or password' });
     }
 
     const user = typeof raw === 'string' ? JSON.parse(raw) : raw;
 
     if (user.status === 'rejected') {
-      return new Response(JSON.stringify({ error: 'Your registration has been rejected' }), { status: 403 });
+      return res.status(403).json({ error: 'Your registration has been rejected' });
     }
 
     if (user.status === 'pending') {
-      return new Response(JSON.stringify({
-        error: 'Your registration is still pending admin approval',
-        pending: true,
-      }), { status: 403 });
+      return res.status(403).json({ error: 'Your registration is still pending admin approval', pending: true });
     }
 
     const hashedInput = hashPassword(password, user.salt);
     if (hashedInput !== user.password) {
-      return new Response(JSON.stringify({ error: 'Invalid email or password' }), { status: 401 });
+      return res.status(401).json({ error: 'Invalid email or password' });
     }
 
     const token = generateToken();
     await redis.set(`token:${token}`, emailLower, { ex: 60 * 60 * 24 * 30 });
 
-    return new Response(JSON.stringify({ message: 'Login successful', token }), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Set-Cookie': `auth_token=${token}; HttpOnly; Path=/; Max-Age=${60 * 60 * 24 * 30}; SameSite=Lax`,
-      },
-    });
+    res.setHeader('Set-Cookie', `auth_token=${token}; HttpOnly; Path=/; Max-Age=${60 * 60 * 24 * 30}; SameSite=Lax`);
+    return res.status(200).json({ message: 'Login successful', token });
   } catch (err) {
-    return new Response(JSON.stringify({ error: 'Server error' }), { status: 500 });
+    return res.status(500).json({ error: 'Server error' });
   }
-}
+};

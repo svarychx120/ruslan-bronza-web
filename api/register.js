@@ -1,27 +1,27 @@
-import redis from '../lib/redis.js';
-import crypto from 'crypto';
+const redis = require('../lib/redis.js');
+const crypto = require('crypto');
 
 function hashPassword(password, salt) {
   return crypto.createHash('sha256').update(password + salt).digest('hex');
 }
 
-export default async function handler(req) {
+module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405 });
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    const { name, surname, group, email, password } = await req.json();
+    const { name, surname, group, email, password } = req.body;
 
     if (!name || !surname || !group || !email || !password) {
-      return new Response(JSON.stringify({ error: 'All fields are required' }), { status: 400 });
+      return res.status(400).json({ error: 'All fields are required' });
     }
 
     const emailLower = email.toLowerCase().trim();
 
     const existing = await redis.get(`user:${emailLower}`);
     if (existing) {
-      return new Response(JSON.stringify({ error: 'This email is already registered' }), { status: 409 });
+      return res.status(409).json({ error: 'This email is already registered' });
     }
 
     const salt = crypto.randomBytes(16).toString('hex');
@@ -41,11 +41,8 @@ export default async function handler(req) {
 
     await redis.set(`user:${emailLower}`, JSON.stringify(user));
 
-    return new Response(JSON.stringify({ message: 'Registration submitted. Awaiting admin approval.' }), {
-      status: 201,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return res.status(201).json({ message: 'Registration submitted. Awaiting admin approval.' });
   } catch (err) {
-    return new Response(JSON.stringify({ error: 'Server error' }), { status: 500 });
+    return res.status(500).json({ error: 'Server error' });
   }
-}
+};

@@ -1,7 +1,7 @@
-import redis from '../../lib/redis.js';
+const redis = require('../../lib/redis.js');
 
 async function getAdminFromToken(req) {
-  const cookies = req.headers.get('cookie') || '';
+  const cookies = req.headers.cookie || '';
   const tokenMatch = cookies.match(/auth_token=([^;]+)/);
   const token = tokenMatch ? tokenMatch[1] : null;
   if (!token) return null;
@@ -18,15 +18,15 @@ async function getAdminFromToken(req) {
   return user;
 }
 
-export default async function handler(req) {
+module.exports = async function handler(req, res) {
   if (req.method !== 'GET') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405 });
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
     const admin = await getAdminFromToken(req);
     if (!admin) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
+      return res.status(401).json({ error: 'Unauthorized' });
     }
 
     const keys = await redis.keys('user:*');
@@ -50,11 +50,8 @@ export default async function handler(req) {
 
     users.sort((a, b) => b.createdAt - a.createdAt);
 
-    return new Response(JSON.stringify({ users }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return res.status(200).json({ users });
   } catch (err) {
-    return new Response(JSON.stringify({ error: 'Server error' }), { status: 500 });
+    return res.status(500).json({ error: 'Server error' });
   }
-}
+};
