@@ -1,6 +1,3 @@
-export default function handler() {
-  return new Response('{"ok":true}', {
-    status: 200,
-    headers: { 'Content-Type': 'application/json' },
-  });
+export default function handler(req, res) {
+  res.status(200).json({ ok: true, time: Date.now() });
 }
