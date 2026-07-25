@@ -1,4 +1,4 @@
-import { kv } from '@vercel/kv';
+import redis from '../_redis.js';
 import crypto from 'crypto';
 
 function hashPassword(password, salt) {
@@ -11,7 +11,7 @@ export default async function handler(req) {
   }
 
   try {
-    const alreadySet = await kv.get('admin_created');
+    const alreadySet = await redis.get('admin_created');
     if (alreadySet) {
       return new Response(JSON.stringify({ error: 'Admin already set up' }), { status: 409 });
     }
@@ -24,7 +24,7 @@ export default async function handler(req) {
     const salt = crypto.randomBytes(16).toString('hex');
     const hashedPassword = hashPassword(password, salt);
 
-    await kv.set(`user:${email.toLowerCase().trim()}`, JSON.stringify({
+    await redis.set(`user:${email.toLowerCase().trim()}`, JSON.stringify({
       name: 'Admin',
       surname: '',
       group: 'admin',
@@ -36,7 +36,7 @@ export default async function handler(req) {
       createdAt: Date.now(),
     }));
 
-    await kv.set('admin_created', true);
+    await redis.set('admin_created', true);
 
     return new Response(JSON.stringify({ message: 'Admin account created successfully' }), {
       status: 201,

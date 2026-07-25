@@ -1,4 +1,4 @@
-import { kv } from '@vercel/kv';
+import redis from '../_redis.js';
 import crypto from 'crypto';
 
 function hashPassword(password, salt) {
@@ -19,7 +19,7 @@ export default async function handler(req) {
 
     const emailLower = email.toLowerCase().trim();
 
-    const existing = await kv.get(`user:${emailLower}`);
+    const existing = await redis.get(`user:${emailLower}`);
     if (existing) {
       return new Response(JSON.stringify({ error: 'This email is already registered' }), { status: 409 });
     }
@@ -39,7 +39,7 @@ export default async function handler(req) {
       createdAt: Date.now(),
     };
 
-    await kv.set(`user:${emailLower}`, JSON.stringify(user));
+    await redis.set(`user:${emailLower}`, JSON.stringify(user));
 
     return new Response(JSON.stringify({ message: 'Registration submitted. Awaiting admin approval.' }), {
       status: 201,

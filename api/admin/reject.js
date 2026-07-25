@@ -1,4 +1,4 @@
-import { kv } from '@vercel/kv';
+import redis from '../../_redis.js';
 
 async function getAdminFromToken(req) {
   const cookies = req.headers.get('cookie') || '';
@@ -6,10 +6,10 @@ async function getAdminFromToken(req) {
   const token = tokenMatch ? tokenMatch[1] : null;
   if (!token) return null;
 
-  const email = await kv.get(`token:${token}`);
+  const email = await redis.get(`token:${token}`);
   if (!email) return null;
 
-  const raw = await kv.get(`user:${email}`);
+  const raw = await redis.get(`user:${email}`);
   if (!raw) return null;
 
   const user = typeof raw === 'string' ? JSON.parse(raw) : raw;
@@ -35,14 +35,14 @@ export default async function handler(req) {
     }
 
     const emailLower = email.toLowerCase().trim();
-    const raw = await kv.get(`user:${emailLower}`);
+    const raw = await redis.get(`user:${emailLower}`);
     if (!raw) {
       return new Response(JSON.stringify({ error: 'User not found' }), { status: 404 });
     }
 
     const user = typeof raw === 'string' ? JSON.parse(raw) : raw;
     user.status = 'rejected';
-    await kv.set(`user:${emailLower}`, JSON.stringify(user));
+    await redis.set(`user:${emailLower}`, JSON.stringify(user));
 
     return new Response(JSON.stringify({ message: 'User rejected' }), {
       status: 200,

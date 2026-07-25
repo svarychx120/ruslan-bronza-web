@@ -1,4 +1,4 @@
-import { kv } from '@vercel/kv';
+import redis from '../_redis.js';
 import crypto from 'crypto';
 
 function hashPassword(password, salt) {
@@ -22,7 +22,7 @@ export default async function handler(req) {
     }
 
     const emailLower = email.toLowerCase().trim();
-    const raw = await kv.get(`user:${emailLower}`);
+    const raw = await redis.get(`user:${emailLower}`);
 
     if (!raw) {
       return new Response(JSON.stringify({ error: 'Invalid email or password' }), { status: 401 });
@@ -47,7 +47,7 @@ export default async function handler(req) {
     }
 
     const token = generateToken();
-    await kv.set(`token:${token}`, emailLower, { ex: 60 * 60 * 24 * 30 });
+    await redis.set(`token:${token}`, emailLower, { ex: 60 * 60 * 24 * 30 });
 
     return new Response(JSON.stringify({ message: 'Login successful', token }), {
       status: 200,

@@ -1,4 +1,4 @@
-import { kv } from '@vercel/kv';
+import redis from '../_redis.js';
 
 export default async function handler(req) {
   if (req.method !== 'GET') {
@@ -14,12 +14,12 @@ export default async function handler(req) {
       return new Response(JSON.stringify({ authenticated: false }), { status: 401 });
     }
 
-    const email = await kv.get(`token:${token}`);
+    const email = await redis.get(`token:${token}`);
     if (!email) {
       return new Response(JSON.stringify({ authenticated: false }), { status: 401 });
     }
 
-    const raw = await kv.get(`user:${email}`);
+    const raw = await redis.get(`user:${email}`);
     if (!raw) {
       return new Response(JSON.stringify({ authenticated: false }), { status: 401 });
     }

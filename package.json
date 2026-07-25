@@ -2,6 +2,6 @@
   "name": "ruslan-bronza-web",
   "private": true,
   "dependencies": {
-    "@vercel/kv": "^1.0.1"
+    "@upstash/redis": "^1.34.0"
   }
 }
