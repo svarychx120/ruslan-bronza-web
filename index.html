@@ -411,6 +411,358 @@
   @media (max-width: 768px) {
     .footer { gap: 1rem; }
   }
+
+  /* ── Topbar Auth ── */
+  .topbar {
+    justify-content: space-between;
+  }
+
+  .topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .topbar-btn {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.3rem;
+    color: var(--gold);
+    background: none;
+    border: 1px solid rgba(200, 168, 78, 0.3);
+    padding: 0.4rem 0.7rem;
+    cursor: pointer;
+    letter-spacing: 0.15em;
+    transition: all 0.3s;
+    text-shadow: 0 0 6px rgba(200, 168, 78, 0.2);
+  }
+
+  .topbar-btn:hover {
+    border-color: var(--gold-bright);
+    color: var(--gold-bright);
+    text-shadow: 0 0 14px rgba(200, 168, 78, 0.5);
+    background: rgba(200, 168, 78, 0.05);
+  }
+
+  .topbar-btn.admin-btn {
+    border-color: rgba(200, 100, 78, 0.4);
+    color: #e4a06b;
+  }
+
+  .topbar-btn.admin-btn:hover {
+    border-color: #e4a06b;
+    color: #ffba8a;
+  }
+
+  .topbar-greeting {
+    font-size: 0.25rem;
+    color: rgba(200, 168, 78, 0.5);
+    letter-spacing: 0.1em;
+  }
+
+  /* ── Auth Overlay ── */
+  .auth-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    background: rgba(8, 8, 5, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+
+  .auth-card {
+    background: rgba(20, 18, 10, 0.95);
+    border: 1px solid rgba(200, 168, 78, 0.2);
+    padding: 2.5rem 2rem;
+    max-width: 420px;
+    width: 90%;
+    text-align: center;
+    box-shadow:
+      0 0 60px rgba(8, 8, 5, 0.8),
+      0 0 120px rgba(200, 168, 78, 0.05);
+  }
+
+  .auth-card h2 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.55rem;
+    color: var(--gold-bright);
+    letter-spacing: 0.2em;
+    margin-bottom: 1.8rem;
+    text-shadow: 0 0 12px rgba(228, 199, 107, 0.4);
+  }
+
+  .auth-card h3 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.4rem;
+    color: var(--gold);
+    letter-spacing: 0.15em;
+    margin-bottom: 0.8rem;
+  }
+
+  .auth-card p {
+    font-family: 'Crimson Text', Georgia, serif;
+    color: rgba(200, 168, 78, 0.5);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    margin-top: 1.2rem;
+  }
+
+  .auth-input {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.3rem;
+    padding: 0.55rem 0.7rem;
+    background: rgba(8, 8, 5, 0.6);
+    border: 1px solid rgba(200, 168, 78, 0.2);
+    color: var(--gold-bright);
+    letter-spacing: 0.08em;
+    outline: none;
+    transition: all 0.3s;
+  }
+
+  .auth-input::placeholder {
+    color: rgba(200, 168, 78, 0.25);
+    letter-spacing: 0.05em;
+  }
+
+  .auth-input:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 12px rgba(200, 168, 78, 0.1);
+  }
+
+  .auth-submit {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.35rem;
+    padding: 0.6rem;
+    background: rgba(200, 168, 78, 0.08);
+    border: 1px solid var(--gold);
+    color: var(--gold-bright);
+    cursor: pointer;
+    letter-spacing: 0.2em;
+    margin-top: 0.3rem;
+    transition: all 0.3s;
+    text-shadow: 0 0 8px rgba(228, 199, 107, 0.3);
+  }
+
+  .auth-submit:hover {
+    background: rgba(200, 168, 78, 0.15);
+    box-shadow: 0 0 20px rgba(200, 168, 78, 0.15);
+  }
+
+  .auth-submit:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .auth-switch {
+    color: rgba(200, 168, 78, 0.4);
+    cursor: pointer;
+    font-size: 0.22rem;
+    font-family: 'Press Start 2P', monospace;
+    letter-spacing: 0.1em;
+    margin-top: 1rem;
+    transition: color 0.3s;
+    background: none;
+    border: none;
+  }
+
+  .auth-switch:hover {
+    color: var(--gold-bright);
+  }
+
+  .auth-error {
+    color: #c84e4e;
+    font-size: 0.22rem;
+    font-family: 'Press Start 2P', monospace;
+    letter-spacing: 0.05em;
+    min-height: 1.2em;
+    margin-top: 0.3rem;
+  }
+
+  /* ── Admin Panel ── */
+  .admin-panel-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    background: rgba(8, 8, 5, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .admin-panel {
+    background: rgba(20, 18, 10, 0.98);
+    border: 1px solid rgba(200, 168, 78, 0.25);
+    max-width: 640px;
+    width: 92%;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 2rem;
+    box-shadow:
+      0 0 80px rgba(8, 8, 5, 0.9),
+      0 0 160px rgba(200, 168, 78, 0.06);
+  }
+
+  .admin-panel h2 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.5rem;
+    color: var(--gold-bright);
+    letter-spacing: 0.2em;
+    margin-bottom: 1.5rem;
+    text-shadow: 0 0 12px rgba(228, 199, 107, 0.4);
+  }
+
+  .admin-close {
+    position: absolute;
+    top: 0.8rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: var(--gold);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.5rem;
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+
+  .admin-close:hover {
+    color: var(--gold-bright);
+  }
+
+  .admin-users-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .admin-user-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.7rem;
+    border: 1px solid rgba(200, 168, 78, 0.1);
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .admin-user-info {
+    font-size: 0.24rem;
+    color: rgba(200, 168, 78, 0.7);
+    font-family: 'Press Start 2P', monospace;
+    letter-spacing: 0.06em;
+    flex: 1;
+    min-width: 180px;
+  }
+
+  .admin-user-info span {
+    color: var(--gold-bright);
+  }
+
+  .admin-user-status {
+    font-size: 0.2rem;
+    padding: 0.2rem 0.4rem;
+    border-radius: 2px;
+    font-family: 'Press Start 2P', monospace;
+  }
+
+  .admin-user-status.pending {
+    color: #e4c86b;
+    border: 1px solid rgba(228, 200, 107, 0.3);
+  }
+
+  .admin-user-status.approved {
+    color: #6be48a;
+    border: 1px solid rgba(107, 228, 138, 0.3);
+  }
+
+  .admin-user-status.rejected {
+    color: #e46b6b;
+    border: 1px solid rgba(228, 107, 107, 0.3);
+  }
+
+  .admin-row-actions {
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  .admin-action-btn {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.2rem;
+    padding: 0.3rem 0.5rem;
+    cursor: pointer;
+    border: 1px solid;
+    background: none;
+    letter-spacing: 0.08em;
+    transition: all 0.3s;
+  }
+
+  .admin-action-btn.approve {
+    color: #6be48a;
+    border-color: rgba(107, 228, 138, 0.4);
+  }
+
+  .admin-action-btn.approve:hover {
+    background: rgba(107, 228, 138, 0.08);
+    border-color: #6be48a;
+  }
+
+  .admin-action-btn.reject {
+    color: #e46b6b;
+    border-color: rgba(228, 107, 107, 0.4);
+  }
+
+  .admin-action-btn.reject:hover {
+    background: rgba(228, 107, 107, 0.08);
+    border-color: #e46b6b;
+  }
+
+  .admin-empty {
+    font-family: 'Crimson Text', Georgia, serif;
+    color: rgba(200, 168, 78, 0.35);
+    font-size: 1rem;
+    text-align: center;
+    padding: 2rem;
+    font-style: italic;
+  }
+
+  @media (max-width: 768px) {
+    .topbar-actions {
+      gap: 0.4rem;
+    }
+    .topbar-btn {
+      font-size: 0.22rem;
+      padding: 0.3rem 0.4rem;
+    }
+    .topbar-greeting {
+      display: none;
+    }
+    .auth-card {
+      padding: 1.5rem 1.2rem;
+    }
+    .auth-card h2 {
+      font-size: 0.4rem;
+    }
+    .auth-input {
+      font-size: 0.24rem;
+    }
+    .auth-submit {
+      font-size: 0.28rem;
+    }
+    .admin-user-row {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
 </style>
 </head>
 <body>
@@ -421,9 +773,50 @@
 
 <nav class="topbar">
   <span>logika ukrlana bronzovicha</span>
+  <div class="topbar-actions" id="topbarActions"></div>
 </nav>
 
-<div class="scroll-container" id="scrollContainer">
+<!-- ═══ Auth Overlay ═══ -->
+<div class="auth-overlay" id="authOverlay">
+  <!-- Register Form -->
+  <div class="auth-card" id="registerCard">
+    <h2>REQUEST ACCESS</h2>
+    <p>Fill out the form below to request access.<br>You'll be able to log in once an admin approves you.</p>
+    <form class="auth-form" id="registerForm">
+      <input class="auth-input" type="text" name="name" placeholder="NAME" required autocomplete="given-name">
+      <input class="auth-input" type="text" name="surname" placeholder="SURNAME" required autocomplete="family-name">
+      <input class="auth-input" type="text" name="group" placeholder="GROUP" required>
+      <input class="auth-input" type="email" name="email" placeholder="EMAIL" required autocomplete="email">
+      <input class="auth-input" type="password" name="password" placeholder="PASSWORD" required autocomplete="new-password" minlength="4">
+      <button class="auth-submit" type="submit">SUBMIT REQUEST</button>
+    </form>
+    <div class="auth-error" id="registerError"></div>
+    <button class="auth-switch" id="showLogin">Already registered? Log in</button>
+  </div>
+
+  <!-- Login Form -->
+  <div class="auth-card" id="loginCard" style="display:none">
+    <h2>LOG IN</h2>
+    <p>Enter your email and password to continue.</p>
+    <form class="auth-form" id="loginForm">
+      <input class="auth-input" type="email" name="email" placeholder="EMAIL" required autocomplete="email">
+      <input class="auth-input" type="password" name="password" placeholder="PASSWORD" required autocomplete="current-password">
+      <button class="auth-submit" type="submit">LOG IN</button>
+    </form>
+    <div class="auth-error" id="loginError"></div>
+    <button class="auth-switch" id="showRegister">Don't have an account? Register</button>
+  </div>
+
+  <!-- Pending Approval -->
+  <div class="auth-card" id="pendingCard" style="display:none">
+    <h2>AWAITING APPROVAL</h2>
+    <p>Your registration has been submitted and is pending admin review.</p>
+    <p>You'll gain access once an admin approves your account.</p>
+    <button class="auth-submit" id="pendingLogout" style="margin-top:1.2rem">LOG OUT</button>
+  </div>
+</div>
+
+<div class="scroll-container" id="scrollContainer" style="display:none">
 
   <!-- ═══ SECTION 1: The Story ═══ -->
   <section class="section story-section" id="story1">
@@ -504,7 +897,272 @@
 
 </div>
 
+<!-- ═══ Admin Panel ═══ -->
+<div class="admin-panel-overlay" id="adminPanelOverlay" style="display:none">
+  <div class="admin-panel">
+    <h2>ADMIN MENU</h2>
+    <div class="admin-users-list" id="adminUsersList"></div>
+    <div class="admin-empty" id="adminEmpty" style="display:none">No registration requests.</div>
+    <button class="auth-submit" id="adminCloseBtn" style="margin-top:1.5rem;width:100%">CLOSE</button>
+  </div>
+</div>
+
 <script>
+/* ═══════════════════════════════════════════
+   AUTH SYSTEM
+   ═══════════════════════════════════════════ */
+let authState = {
+  authenticated: false,
+  user: null,
+  checked: false,
+};
+
+const authOverlay = document.getElementById('authOverlay');
+const registerCard = document.getElementById('registerCard');
+const loginCard = document.getElementById('loginCard');
+const pendingCard = document.getElementById('pendingCard');
+const topbarActions = document.getElementById('topbarActions');
+const adminPanelOverlay = document.getElementById('adminPanelOverlay');
+const adminUsersList = document.getElementById('adminUsersList');
+const adminEmpty = document.getElementById('adminEmpty');
+
+async function apiCall(url, options = {}) {
+  const res = await fetch(url, {
+    credentials: 'same-origin',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(options.headers || {}),
+    },
+  });
+  const data = await res.json();
+  return { status: res.status, data };
+}
+
+function showCard(card) {
+  registerCard.style.display = 'none';
+  loginCard.style.display = 'none';
+  pendingCard.style.display = 'none';
+  card.style.display = '';
+}
+
+function renderTopbar() {
+  if (!authState.authenticated || !authState.user) {
+    topbarActions.innerHTML = '';
+    return;
+  }
+
+  const { user } = authState;
+
+  if (user.status === 'pending') {
+    topbarActions.innerHTML = `
+      <span class="topbar-greeting">${user.name}</span>
+      <button class="topbar-btn" onclick="handleLogout()">LOG OUT</button>
+    `;
+  } else if (user.tier === 'admin') {
+    topbarActions.innerHTML = `
+      <span class="topbar-greeting">${user.name}</span>
+      <button class="topbar-btn admin-btn" onclick="openAdminPanel()">ADMIN MENU</button>
+      <button class="topbar-btn" onclick="handleLogout()">LOG OUT</button>
+    `;
+  } else {
+    topbarActions.innerHTML = `
+      <span class="topbar-greeting">${user.name}</span>
+      <button class="topbar-btn" onclick="handleLogout()">LOG OUT</button>
+    `;
+  }
+}
+
+function renderAuthOverlay() {
+  if (!authState.authenticated || !authState.user) {
+    authOverlay.style.display = '';
+    document.body.style.overflow = 'hidden';
+    document.getElementById('scrollContainer').style.display = 'none';
+    showCard(registerCard);
+    topbarActions.innerHTML = '';
+  } else if (authState.user.status === 'pending') {
+    authOverlay.style.display = '';
+    document.body.style.overflow = 'hidden';
+    document.getElementById('scrollContainer').style.display = 'none';
+    showCard(pendingCard);
+    renderTopbar();
+  } else {
+    authOverlay.style.display = 'none';
+    document.body.style.overflow = '';
+    document.getElementById('scrollContainer').style.display = '';
+    renderTopbar();
+  }
+}
+
+async function checkSession() {
+  const { status, data } = await apiCall('/api/me');
+  if (status === 200 && data.authenticated) {
+    authState.authenticated = true;
+    authState.user = data.user;
+  }
+  authState.checked = true;
+  renderAuthOverlay();
+}
+
+async function handleRegister(e) {
+  e.preventDefault();
+  const form = e.target;
+  const errorEl = document.getElementById('registerError');
+  errorEl.textContent = '';
+
+  const submitBtn = form.querySelector('.auth-submit');
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'SUBMITTING...';
+
+  const payload = {
+    name: form.name.value,
+    surname: form.surname.value,
+    group: form.group.value,
+    email: form.email.value,
+    password: form.password.value,
+  };
+
+  const { status, data } = await apiCall('/api/register', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+
+  submitBtn.disabled = false;
+  submitBtn.textContent = 'SUBMIT REQUEST';
+
+  if (status === 409) {
+    errorEl.textContent = 'This email is already registered.';
+  } else if (status >= 400) {
+    errorEl.textContent = data.error || 'Registration failed.';
+  } else {
+    authState.authenticated = true;
+    authState.user = {
+      name: payload.name,
+      surname: payload.surname,
+      group: payload.group,
+      email: payload.email,
+      status: 'pending',
+      tier: 'member',
+    };
+    renderAuthOverlay();
+  }
+}
+
+async function handleLogin(e) {
+  e.preventDefault();
+  const form = e.target;
+  const errorEl = document.getElementById('loginError');
+  errorEl.textContent = '';
+
+  const submitBtn = form.querySelector('.auth-submit');
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'LOGGING IN...';
+
+  const { status, data } = await apiCall('/api/login', {
+    method: 'POST',
+    body: JSON.stringify({
+      email: form.email.value,
+      password: form.password.value,
+    }),
+  });
+
+  submitBtn.disabled = false;
+  submitBtn.textContent = 'LOG IN';
+
+  if (status === 403 && data.pending) {
+    authState.authenticated = true;
+    authState.user = { name: '', surname: '', group: '', email: form.email.value, status: 'pending', tier: 'member' };
+    renderAuthOverlay();
+    return;
+  }
+
+  if (status >= 400) {
+    errorEl.textContent = data.error || 'Login failed.';
+    return;
+  }
+
+  await checkSession();
+}
+
+async function handleLogout() {
+  await apiCall('/api/logout', { method: 'POST' });
+  authState.authenticated = false;
+  authState.user = null;
+  renderAuthOverlay();
+}
+
+async function openAdminPanel() {
+  adminPanelOverlay.style.display = 'flex';
+  await loadAdminUsers();
+}
+
+function closeAdminPanel() {
+  adminPanelOverlay.style.display = 'none';
+}
+
+async function loadAdminUsers() {
+  const { status, data } = await apiCall('/api/admin/users');
+  if (status !== 200) {
+    adminUsersList.innerHTML = '<div class="admin-empty">Failed to load users.</div>';
+    return;
+  }
+
+  if (data.users.length === 0) {
+    adminUsersList.innerHTML = '';
+    adminEmpty.style.display = '';
+    return;
+  }
+
+  adminEmpty.style.display = 'none';
+  adminUsersList.innerHTML = data.users.map(u => `
+    <div class="admin-user-row">
+      <div class="admin-user-info">
+        <span>${u.name} ${u.surname}</span><br>
+        ${u.email} &middot; ${u.group}
+      </div>
+      <span class="admin-user-status ${u.status}">${u.status.toUpperCase()}</span>
+      ${u.status === 'pending' ? `
+        <div class="admin-row-actions">
+          <button class="admin-action-btn approve" onclick="approveUser('${u.email}')">APPROVE</button>
+          <button class="admin-action-btn reject" onclick="rejectUser('${u.email}')">REJECT</button>
+        </div>
+      ` : ''}
+    </div>
+  `).join('');
+}
+
+async function approveUser(email) {
+  await apiCall('/api/admin/approve', {
+    method: 'POST',
+    body: JSON.stringify({ email }),
+  });
+  await loadAdminUsers();
+}
+
+async function rejectUser(email) {
+  await apiCall('/api/admin/reject', {
+    method: 'POST',
+    body: JSON.stringify({ email }),
+  });
+  await loadAdminUsers();
+}
+
+/* ═══════════════════════════════════════════
+   AUTH EVENT BINDINGS
+   ═══════════════════════════════════════════ */
+document.getElementById('registerForm').addEventListener('submit', handleRegister);
+document.getElementById('loginForm').addEventListener('submit', handleLogin);
+document.getElementById('showLogin').addEventListener('click', () => showCard(loginCard));
+document.getElementById('showRegister').addEventListener('click', () => showCard(registerCard));
+document.getElementById('pendingLogout').addEventListener('click', handleLogout);
+document.getElementById('adminCloseBtn').addEventListener('click', closeAdminPanel);
+
+adminPanelOverlay.addEventListener('click', function(e) {
+  if (e.target === adminPanelOverlay) closeAdminPanel();
+});
+
+checkSession();
+
 /* ═══════════════════════════════════════════
    DATA
    ═══════════════════════════════════════════ */
@@ -546,41 +1204,32 @@ const ruslanPictures = [
   'photo_2026-07-20 23.04.13',
 ];
 
-const markianInscriptions = [
-  'THE ONE WHO BUILT IT ALL',
-  'HIDDEN HAND BEHIND CREATION',
-  'SHAPER OF WORLDS UNSEEN',
-  'FORGED EVERYTHING YOU TOUCH',
-  'THE SILENT ARCHITECT',
-  'FROM ANGER CAME UNITY',
-  'FOUND FAITH IN THE DARK',
-  'PEACE WAS HIS FINAL GIFT',
-];
+ const markianInscriptions = [
+   'THE ONE WHO BUILT IT ALL',
+   'THE SILENT ARCHITECT',
+   'PEACE WAS HIS FINAL GIFT',
+ ];
 
-const markianPictures = [
-  'photo_2026-07-20 23.03.56',
-  'photo_2026-07-20 23.03.57',
-  'photo_2026-07-20 23.03.58',
-  'photo_2026-07-20 23.04.01',
-  'photo_2026-07-20 23.04.02',
-  'photo_2026-07-20 23.04.07',
-  'photo_2026-07-20 23.04.09',
-  'photo_2026-07-20 23.04.11',
-];
+ const markianPictures = [
+   'original-markian',
+   'teenager-flexing-arms',
+   'teenager-in-black-chair',
+ ];
 
 /* ═══════════════════════════════════════════
    HALL OF FAME CLASS
    ═══════════════════════════════════════════ */
 class HallOfFame {
-  constructor(sectionId, inscriptions, pictures, folder) {
-    this.section = document.getElementById(sectionId);
-    this.stage = this.section.querySelector('.stage');
-    this.counterEl = this.section.querySelector('.counter');
-    this.prevBtn = this.section.querySelector('.prev-btn');
-    this.nextBtn = this.section.querySelector('.next-btn');
-    this.inscriptions = inscriptions;
-    this.pictures = pictures;
-    this.folder = folder;
+   constructor(sectionId, inscriptions, pictures, folder, extension = 'jpeg') {
+     this.section = document.getElementById(sectionId);
+     this.stage = this.section.querySelector('.stage');
+     this.counterEl = this.section.querySelector('.counter');
+     this.prevBtn = this.section.querySelector('.prev-btn');
+     this.nextBtn = this.section.querySelector('.next-btn');
+     this.inscriptions = inscriptions;
+     this.pictures = pictures;
+     this.folder = folder;
+     this.extension = extension;
     this.total = pictures.length;
     this.currentIdx = 0;
     this.cards = [];
@@ -598,7 +1247,7 @@ class HallOfFame {
     card.innerHTML = `
       <div class="frame-wrap">
         <div class="frame"></div>
-        <img src="pictures/${this.folder}/${this.pictures[i]}.jpeg" alt="" loading="lazy">
+         <img src="pictures/${this.folder}/${this.pictures[i]}.${this.extension}" alt="" loading="lazy">
       </div>
       <div class="inscription"><div class="line">${this.inscriptions[i]}</div></div>
     `;
@@ -703,7 +1352,7 @@ class HallOfFame {
    INIT HALLS OF FAME
    ═══════════════════════════════════════════ */
 const ruslanHOF = new HallOfFame('hof-ruslan', ruslanInscriptions, ruslanPictures, 'ruslan');
-const markianHOF = new HallOfFame('hof-markian', markianInscriptions, markianPictures, 'markian');
+ const markianHOF = new HallOfFame('hof-markian', markianInscriptions, markianPictures, 'markian', 'png');
 const allHOFs = [ruslanHOF, markianHOF];
 
 /* ═══════════════════════════════════════════

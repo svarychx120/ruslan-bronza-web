@@ -1,0 +1,7 @@
+{
+  "name": "ruslan-bronza-web",
+  "private": true,
+  "dependencies": {
+    "@vercel/kv": "^1.0.1"
+  }
+}

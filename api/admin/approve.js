@@ -1,0 +1,53 @@
+import { kv } from '@vercel/kv';
+
+async function getAdminFromToken(req) {
+  const cookies = req.headers.get('cookie') || '';
+  const tokenMatch = cookies.match(/auth_token=([^;]+)/);
+  const token = tokenMatch ? tokenMatch[1] : null;
+  if (!token) return null;
+
+  const email = await kv.get(`token:${token}`);
+  if (!email) return null;
+
+  const raw = await kv.get(`user:${email}`);
+  if (!raw) return null;
+
+  const user = typeof raw === 'string' ? JSON.parse(raw) : raw;
+  if (user.tier !== 'admin') return null;
+
+  return user;
+}
+
+export default async function handler(req) {
+  if (req.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405 });
+  }
+
+  try {
+    const admin = await getAdminFromToken(req);
+    if (!admin) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
+    }
+
+    const { email } = await req.json();
+    if (!email) {
+      return new Response(JSON.stringify({ error: 'Email is required' }), { status: 400 });
+    }
+
+    const raw = await kv.get(`user:${email.toLowerCase().trim()}`);
+    if (!raw) {
+      return new Response(JSON.stringify({ error: 'User not found' }), { status: 404 });
+    }
+
+    const user = typeof raw === 'string' ? JSON.parse(raw) : raw;
+    user.status = 'approved';
+    await kv.set(`user:${email.toLowerCase().trim()}`, JSON.stringify(user));
+
+    return new Response(JSON.stringify({ message: 'User approved' }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  } catch (err) {
+    return new Response(JSON.stringify({ error: 'Server error' }), { status: 500 });
+  }
+}
