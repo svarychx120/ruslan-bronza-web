@@ -1,3 +1,3 @@
-export default (req, res) => {
+module.exports = function handler(req, res) {
   res.status(200).send('hello');
 };
