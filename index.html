@@ -775,6 +775,51 @@
       align-items: flex-start;
     }
   }
+
+  /* AI Prompt Counter */
+  .ai-counter-wrap {
+    text-align: center;
+    padding: 0.5rem 0 0.2rem;
+    flex-shrink: 0;
+  }
+
+  .ai-counter-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.28rem;
+    color: rgba(200, 168, 78, 0.3);
+    letter-spacing: 0.15em;
+    margin-bottom: 0.35rem;
+  }
+
+  .ai-counter-number {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 1.1rem;
+    color: var(--gold);
+    text-shadow:
+      0 0 8px rgba(200, 168, 78, 0.3),
+      0 0 16px rgba(200, 168, 78, 0.15);
+    letter-spacing: 0.12em;
+    transition: all 0.15s;
+  }
+
+  .ai-counter-number.tick {
+    animation: aiCounterTick 0.35s ease-out;
+    color: var(--gold-bright);
+    text-shadow:
+      0 0 14px rgba(228, 199, 107, 0.6),
+      0 0 28px rgba(200, 168, 78, 0.3);
+  }
+
+  @keyframes aiCounterTick {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+
+  @media (max-width: 768px) {
+    .ai-counter-number { font-size: 0.9rem; }
+    .ai-counter-label  { font-size: 0.24rem; }
+  }
 </style>
 </head>
 <body>
@@ -872,6 +917,10 @@
         <div class="title-bar"></div>
       </div>
     </header>
+    <div class="ai-counter-wrap">
+      <div class="ai-counter-label">PROMPTS SENT TODAY</div>
+      <div class="ai-counter-number" id="aiPromptsCounter">0</div>
+    </div>
     <div class="stage" id="stage-ruslan"></div>
     <div class="footer">
       <button class="arrow prev-btn" aria-label="Previous">&lt;</button>
@@ -1691,6 +1740,39 @@ function animate(ts) {
 }
 
 requestAnimationFrame(animate);
+
+/* ═══════════════════════════════════════════
+   AI PROMPTS COUNTER — LIVE TICKER
+   ═══════════════════════════════════════════ */
+(function () {
+  const el = document.getElementById('aiPromptsCounter');
+  if (!el) return;
+
+  const now = new Date();
+  const secondsSinceMidnight = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+  const estimatedDaily = 40000 + Math.floor(Math.random() * 30000);
+  let count = Math.floor((secondsSinceMidnight / 86400) * estimatedDaily);
+
+  function render() {
+    el.textContent = count.toLocaleString();
+  }
+
+  function tick() {
+    count += 1 + Math.floor(Math.random() * 3);
+    render();
+    el.classList.add('tick');
+    setTimeout(function () { el.classList.remove('tick'); }, 350);
+    schedule();
+  }
+
+  function schedule() {
+    var delay = Math.floor(Math.random() * 59000) + 1000;
+    setTimeout(tick, delay);
+  }
+
+  render();
+  schedule();
+})();
 </script>
 </body>
 </html>
