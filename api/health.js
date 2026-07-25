@@ -1,3 +1,6 @@
-module.exports = function handler(req, res) {
-  res.status(200).json({ ok: true, ts: Date.now() });
-};
+export default function handler() {
+  return new Response(JSON.stringify({ ok: true, ts: Date.now() }), {
+    status: 200,
+    headers: { 'Content-Type': 'application/json' },
+  });
+}
