@@ -595,9 +595,15 @@
     background: rgba(8, 8, 5, 0.85);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .admin-panel-overlay.visible {
+    opacity: 1;
   }
 
   .admin-panel {
@@ -611,6 +617,12 @@
     box-shadow:
       0 0 80px rgba(8, 8, 5, 0.9),
       0 0 160px rgba(200, 168, 78, 0.06);
+    transform: scale(0.92);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .admin-panel-overlay.visible .admin-panel {
+    transform: scale(1);
   }
 
   .admin-panel h2 {
@@ -1093,11 +1105,19 @@ async function handleLogout() {
 
 async function openAdminPanel() {
   adminPanelOverlay.style.display = 'flex';
+  requestAnimationFrame(() => {
+    adminPanelOverlay.classList.add('visible');
+  });
   await loadAdminUsers();
 }
 
 function closeAdminPanel() {
-  adminPanelOverlay.style.display = 'none';
+  adminPanelOverlay.classList.remove('visible');
+  const onEnd = () => {
+    adminPanelOverlay.style.display = 'none';
+    adminPanelOverlay.removeEventListener('transitionend', onEnd);
+  };
+  adminPanelOverlay.addEventListener('transitionend', onEnd);
 }
 
 async function loadAdminUsers() {
