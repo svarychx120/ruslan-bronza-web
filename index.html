@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>RUSLAN BRONZA</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&display=swap');
 
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -22,7 +22,7 @@
     font-family: 'Press Start 2P', monospace;
     user-select: none;
     -webkit-user-select: none;
-    touch-action: pan-x pinch-zoom;
+    touch-action: pan-x pan-y pinch-zoom;
   }
 
   canvas#nebula { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; }
@@ -54,15 +54,133 @@
     will-change: left, top;
   }
 
-  .container {
-    position: relative; z-index: 2;
-    height: 100vh; display: flex; flex-direction: column;
-    align-items: center; justify-content: space-between;
-    padding: 2.5rem 2rem 1.5rem;
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    padding: 0.8rem 2rem;
+    background: rgba(8, 8, 5, 0.4);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    display: flex; justify-content: center; align-items: center;
+    border-bottom: 1px solid rgba(200, 168, 78, 0.1);
+  }
+
+  .topbar span {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.3rem;
+    color: rgba(200, 168, 78, 0.5);
+    letter-spacing: 0.25em;
+    text-shadow: 0 0 5px rgba(200, 168, 78, 0.12);
   }
 
   @media (max-width: 768px) {
-    .container { padding: 1.8rem 1.2rem 1.2rem; }
+    .topbar { padding: 0.6rem 1rem; }
+    .topbar span { font-size: 0.24rem; }
+  }
+
+  .scroll-container {
+    position: relative; z-index: 2;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .section {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center;
+    padding: 2.5rem 2rem;
+  }
+
+  @media (max-width: 768px) {
+    .section { padding: 1.8rem 1.2rem; }
+  }
+
+  /* ── Story Sections ── */
+  .story-section {
+    justify-content: center;
+    font-family: 'Crimson Text', Georgia, serif;
+  }
+
+  .story-text {
+    max-width: 680px;
+    width: 100%;
+  }
+
+  .story-text p {
+    font-size: clamp(1.1rem, 2vw, 1.35rem);
+    color: rgba(180, 160, 120, 0.55);
+    line-height: 1.75;
+    letter-spacing: 0.02em;
+    margin-bottom: 2.2rem;
+    text-shadow: 0 0 4px rgba(200, 168, 78, 0.08);
+    opacity: 0.45;
+    transition: opacity 0.9s ease, color 0.9s ease, text-shadow 0.9s ease;
+    will-change: opacity, color;
+  }
+
+  .story-text p:last-child { margin-bottom: 0; }
+
+  .story-divider {
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(200, 168, 78, 0.3), transparent);
+    margin: 2rem 0;
+    opacity: 0.12;
+  }
+
+  .story-moral {
+    font-size: clamp(1.3rem, 2.5vw, 1.6rem) !important;
+    font-weight: 600;
+    font-style: italic;
+    text-align: center;
+    color: var(--gold) !important;
+    text-shadow:
+      0 0 12px rgba(200, 168, 78, 0.3),
+      0 0 30px rgba(200, 168, 78, 0.12) !important;
+    margin-top: 3rem !important;
+  }
+
+  .story-cover {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    padding: 4rem 2rem;
+    will-change: opacity, transform;
+  }
+
+  .story-title {
+    font-family: 'Crimson Text', Georgia, serif;
+    font-size: clamp(1.8rem, 5.5vw, 3.2rem);
+    font-weight: 700;
+    font-style: italic;
+    color: var(--gold-bright);
+    text-shadow:
+      0 0 22px rgba(228, 199, 107, 0.4),
+      0 0 55px rgba(200, 168, 78, 0.18),
+      0 0 100px rgba(200, 168, 78, 0.07);
+    line-height: 1.3;
+    transition: opacity 0.4s ease, transform 0.6s ease;
+  }
+
+  .story-cover.fading {
+    opacity: 0.25;
+    transform: translateY(-30px);
+  }
+
+  .story-cover .subtitle {
+    font-family: 'Crimson Text', Georgia, serif;
+    font-size: clamp(0.9rem, 2vw, 1.2rem);
+    color: rgba(200, 168, 78, 0.5);
+    margin-top: 1.5rem;
+    font-style: italic;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── HOF Sections ── */
+  .hof-section {
+    justify-content: space-between;
   }
 
   .header { flex-shrink: 0; text-align: center; }
@@ -255,8 +373,6 @@
     text-shadow: 0 0 12px rgba(200, 168, 78, 0.5);
   }
 
-  .arrows { display: flex; gap: 1.2rem; }
-
   .arrow {
     background: none; border: none;
     color: rgba(200, 168, 78, 0.5);
@@ -300,25 +416,83 @@
 <div class="cursor-glow" id="cursorGlow"></div>
 <div class="scanlines"></div>
 
-<div class="container">
-  <header class="header">
-    <div class="title-wrap">
-      <h1 class="title">RUSLAN BRONZA</h1>
-      <div class="title-bar"></div>
+<nav class="topbar">
+  <span>logika ukrlana bronzovicha</span>
+</nav>
+
+<div class="scroll-container" id="scrollContainer">
+
+  <!-- ═══ SECTION 1: The Story ═══ -->
+  <section class="section story-section" id="story1">
+    <div class="story-cover" id="storyCover">
+      <h2 class="story-title">Once upon a time,<br>in the cloudy meadow,<br>skies opened.</h2>
+      <p class="subtitle">scroll to witness</p>
     </div>
-  </header>
+    <div class="story-text" id="storyText1">
+      <p>This was something that never previously happened on this land of heaven. Everything shattered, the light was so intense it was torching the grass.</p>
+      <p>Ruslan was born — not a simple guy from street, but Ruslan. As soon as he touched the earth, the continent split — it could not hold such greatness.</p>
+      <p>With each step, Ruslan was bringing greater and greater revolution: silicon chips, programming, AI, and so much more. But nothing has quite made his soul feel a true feeling of peace — the one that isn't just a word, but is a feeling you try describing by the word.</p>
+      <hr class="story-divider">
+      <p>And then the waters split. It was Markian. He shouted his name, causing a massive earthquake. Markian wasn't happy. He was cross every time he saw his archenemy — Ruslan.</p>
+      <p>The reason for which he was set to destroy the world was that Ruslan took all the fame of Markian, when in reality everything we see, touch, feel, hear, buy, destroy was made by Markian.</p>
+      <hr class="story-divider">
+      <p>And finally Ruslan faced his fear — a one-to-one confrontation. Ruslan's ego was buried, he already gave up on everything he ever did in his life. But as the lightning was about to strike him, the goddess arrived — it was Markian's mother.</p>
+      <p>She taught from the age of an infant how bad it is to let the faith die. And Markian remembered it — a glimpse of that light shined through his soul and restored his faith. He was no longer angry. He was out to unite with Ruslan.</p>
+      <p>And so they did, despite Ruslan not trusting him for a long time. Soon he started to trust him, and it happened — mother died. Her last words were <em>"ahhh, ahh, deeper"</em>, which meant <em>"find true happiness in your life and never forget to give a correct evaluation on others' feelings."</em></p>
+      <p>And so they cried, which caused massive rainstorms and a formation of new oceans.</p>
+    </div>
+  </section>
 
-  <div class="stage" id="stage"></div>
+  <!-- ═══ SECTION 2: Hall of Fame — Ruslan ═══ -->
+  <section class="section hof-section" id="hof-ruslan">
+    <header class="header">
+      <div class="title-wrap">
+        <h1 class="title">RUSLAN BRONZA</h1>
+        <div class="title-bar"></div>
+      </div>
+    </header>
+    <div class="stage" id="stage-ruslan"></div>
+    <div class="footer">
+      <button class="arrow prev-btn" aria-label="Previous">&lt;</button>
+      <span class="counter"></span>
+      <button class="arrow next-btn" aria-label="Next">&gt;</button>
+    </div>
+  </section>
 
-  <div class="footer">
-    <button class="arrow" id="prevBtn" aria-label="Previous">&lt;</button>
-    <span class="counter" id="counter"></span>
-    <button class="arrow" id="nextBtn" aria-label="Next">&gt;</button>
-  </div>
+  <!-- ═══ SECTION 3: The Conclusion ═══ -->
+  <section class="section story-section" id="story2">
+    <div class="story-text">
+      <p>But then they turned to the other side and saw their savior — Big Yahu. They saw it not just as a tool, but as an opportunity to do the exact thing their mother wished they would do — finally get children.</p>
+      <p>They started having babies in threesome with Big Yahu. But the problem was — Big Yahu is Jewish, which is why every one of the children, including Vlad, Bohdan, Mykhailo, and of course, Makar, were black. They never gained such greatness as their parents, never found true happiness, but the spark was always there.</p>
+      <p>And about their parents — they finally found what they always wanted: peace. Peace with Yahu, peace with their children, and peace with their job. Peace is the only thing their kids could not get. They were never chasing one.</p>
+      <hr class="story-divider">
+      <p class="story-moral">What this story wants to tell is fairly simple: chase peace, chase your dreams. It's an engine that almost never stops, but when it does — everything stops, and peace begins.</p>
+    </div>
+  </section>
+
+  <!-- ═══ SECTION 4: Hall of Fame — Markian ═══ -->
+  <section class="section hof-section" id="hof-markian">
+    <header class="header">
+      <div class="title-wrap">
+        <h1 class="title">MARKIAN</h1>
+        <div class="title-bar"></div>
+      </div>
+    </header>
+    <div class="stage" id="stage-markian"></div>
+    <div class="footer">
+      <button class="arrow prev-btn" aria-label="Previous">&lt;</button>
+      <span class="counter"></span>
+      <button class="arrow next-btn" aria-label="Next">&gt;</button>
+    </div>
+  </section>
+
 </div>
 
 <script>
-const inscriptions = [
+/* ═══════════════════════════════════════════
+   DATA
+   ═══════════════════════════════════════════ */
+const ruslanInscriptions = [
   'THE FIRST TO SEE THE PATTERN',
   'BROKE THE IMPOSSIBLE IN HALF',
   'TAUGHT MACHINES TO UNDERSTAND',
@@ -337,7 +511,7 @@ const inscriptions = [
   'BUILDER OF DREAMS, DREAMER OF BUILDS',
 ];
 
-const pictures = [
+const ruslanPictures = [
   'photo_2026-07-20 23.03.56',
   'photo_2026-07-20 23.03.57',
   'photo_2026-07-20 23.03.58',
@@ -356,112 +530,315 @@ const pictures = [
   'photo_2026-07-20 23.04.13',
 ];
 
-const stage = document.getElementById('stage');
-const counterEl = document.getElementById('counter');
-const prevBtn = document.getElementById('prevBtn');
-const nextBtn = document.getElementById('nextBtn');
+const markianInscriptions = [
+  'THE ONE WHO BUILT IT ALL',
+  'HIDDEN HAND BEHIND CREATION',
+  'SHAPER OF WORLDS UNSEEN',
+  'FORGED EVERYTHING YOU TOUCH',
+  'THE SILENT ARCHITECT',
+  'FROM ANGER CAME UNITY',
+  'FOUND FAITH IN THE DARK',
+  'PEACE WAS HIS FINAL GIFT',
+];
+
+const markianPictures = [
+  'photo_2026-07-20 23.03.56',
+  'photo_2026-07-20 23.03.57',
+  'photo_2026-07-20 23.03.58',
+  'photo_2026-07-20 23.04.01',
+  'photo_2026-07-20 23.04.02',
+  'photo_2026-07-20 23.04.07',
+  'photo_2026-07-20 23.04.09',
+  'photo_2026-07-20 23.04.11',
+];
+
+/* ═══════════════════════════════════════════
+   HALL OF FAME CLASS
+   ═══════════════════════════════════════════ */
+class HallOfFame {
+  constructor(sectionId, inscriptions, pictures) {
+    this.section = document.getElementById(sectionId);
+    this.stage = this.section.querySelector('.stage');
+    this.counterEl = this.section.querySelector('.counter');
+    this.prevBtn = this.section.querySelector('.prev-btn');
+    this.nextBtn = this.section.querySelector('.next-btn');
+    this.inscriptions = inscriptions;
+    this.pictures = pictures;
+    this.total = pictures.length;
+    this.currentIdx = 0;
+    this.cards = [];
+    this.transitioning = false;
+    this.transitionTimer = null;
+    this.active = false;
+    this.autoplayTimer = null;
+
+    this.init();
+  }
+
+  createCard(i) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="frame-wrap">
+        <div class="frame"></div>
+        <img src="pictures/${this.pictures[i]}.jpeg" alt="" loading="lazy">
+      </div>
+      <div class="inscription"><div class="line">${this.inscriptions[i]}</div></div>
+    `;
+    this.stage.appendChild(card);
+    this.cards.push(card);
+  }
+
+  init() {
+    for (let i = 0; i < this.total; i++) this.createCard(i);
+    this.cards[0].classList.add('visible');
+    this.updateCounter();
+
+    this.prevBtn.addEventListener('click', () => this.goTo(this.currentIdx - 1, -1));
+    this.nextBtn.addEventListener('click', () => this.goTo(this.currentIdx + 1, 1));
+
+    this.wheelAccum = 0;
+    this.wheelTimer = null;
+    this.section.addEventListener('wheel', e => {
+      if (!this.active) return;
+      const rawDir = e.deltaY + e.deltaX;
+      if ((this.currentIdx === 0 && rawDir < 0) ||
+          (this.currentIdx === this.total - 1 && rawDir > 0)) {
+        return;
+      }
+      e.preventDefault();
+      e.stopPropagation();
+      this.wheelAccum += rawDir;
+      if (this.wheelTimer) clearTimeout(this.wheelTimer);
+      this.wheelTimer = setTimeout(() => {
+        if (Math.abs(this.wheelAccum) > 40) {
+          this.goTo(this.currentIdx + (this.wheelAccum > 0 ? 1 : -1), this.wheelAccum > 0 ? 1 : -1);
+        }
+        this.wheelAccum = 0;
+      }, 100);
+    }, { passive: false });
+
+    this.touchStartX = 0;
+    this.section.addEventListener('touchstart', e => {
+      this.touchStartX = e.touches[0].clientX;
+    }, { passive: true });
+    this.section.addEventListener('touchend', e => {
+      if (!this.active) return;
+      const diff = this.touchStartX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 50) this.goTo(this.currentIdx + (diff > 0 ? 1 : -1), diff > 0 ? 1 : -1);
+    });
+
+    this.resetAutoplay();
+  }
+
+  goTo(targetIdx, dir) {
+    if (this.transitioning || targetIdx === this.currentIdx) return;
+    if (targetIdx < 0 || targetIdx >= this.total) return;
+    if (!this.active) return;
+    this.transitioning = true;
+
+    const oldCard = this.cards[this.currentIdx];
+    const newCard = this.cards[targetIdx];
+
+    oldCard.classList.remove('visible');
+    oldCard.classList.add(dir === 1 ? 'leaving-left' : 'leaving-right');
+
+    newCard.classList.remove('leaving-left', 'leaving-right', 'entering-left', 'entering-right');
+    newCard.classList.add(dir === 1 ? 'entering-right' : 'entering-left');
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        newCard.classList.remove('entering-left', 'entering-right');
+        newCard.classList.add('visible');
+      });
+    });
+
+    this.currentIdx = targetIdx;
+    this.updateCounter();
+    this.resetAutoplay();
+
+    clearTimeout(this.transitionTimer);
+    this.transitionTimer = setTimeout(() => {
+      oldCard.classList.remove('leaving-left', 'leaving-right');
+      this.transitioning = false;
+    }, 700);
+  }
+
+  updateCounter() {
+    this.counterEl.textContent = `${this.currentIdx + 1} / ${this.total}`;
+    this.counterEl.classList.add('pulse');
+    setTimeout(() => this.counterEl.classList.remove('pulse'), 400);
+  }
+
+  resetAutoplay() {
+    clearTimeout(this.autoplayTimer);
+    this.autoplayTimer = setTimeout(() => this.goTo(this.currentIdx + 1, 1), 8000);
+  }
+
+  setActive(active) {
+    if (this.active === active) return;
+    this.active = active;
+    if (active) {
+      this.resetAutoplay();
+    } else {
+      clearTimeout(this.autoplayTimer);
+      clearTimeout(this.transitionTimer);
+      if (this.transitioning) {
+        for (const card of this.cards) {
+          card.classList.remove('leaving-left', 'leaving-right', 'entering-left', 'entering-right');
+          if (card === this.cards[this.currentIdx]) {
+            card.classList.add('visible');
+          } else {
+            card.classList.remove('visible');
+          }
+        }
+        this.transitioning = false;
+      }
+    }
+  }
+
+  get currentCard() {
+    if (this.transitioning) return null;
+    return this.cards[this.currentIdx];
+  }
+}
+
+/* ═══════════════════════════════════════════
+   INIT HALLS OF FAME
+   ═══════════════════════════════════════════ */
+const ruslanHOF = new HallOfFame('hof-ruslan', ruslanInscriptions, ruslanPictures);
+const markianHOF = new HallOfFame('hof-markian', markianInscriptions, markianPictures);
+const allHOFs = [ruslanHOF, markianHOF];
+
+/* ═══════════════════════════════════════════
+   SCROLL-BASED ACTIVE HOF + TEXT DISSOLVE
+   ═══════════════════════════════════════════ */
+const scrollContainer = document.getElementById('scrollContainer');
+
+function getVisibleRatio(el) {
+  const rect = el.getBoundingClientRect();
+  const vh = window.innerHeight;
+  if (rect.bottom <= 0 || rect.top >= vh) return 0;
+  const visibleH = Math.min(rect.bottom, vh) - Math.max(rect.top, 0);
+  return visibleH / rect.height;
+}
+
+function updateActiveHOF() {
+  let best = null, bestRatio = 0;
+  for (const hof of allHOFs) {
+    const ratio = getVisibleRatio(hof.section);
+    if (ratio > bestRatio) { bestRatio = ratio; best = hof; }
+  }
+  for (const hof of allHOFs) {
+    hof.setActive(hof === best && bestRatio > 0.4);
+  }
+}
+
+function updateTextDissolve() {
+  const vh = window.innerHeight;
+  const focusTop = vh * 0.22;
+  const focusBot = vh * 0.70;
+  const focusCenter = (focusTop + focusBot) / 2;
+  const fadeSpan = vh * 0.55;
+
+  const storyParas = document.querySelectorAll('.story-text p');
+  const storyDividers = document.querySelectorAll('.story-text .story-divider');
+
+  for (const p of storyParas) {
+    const rect = p.getBoundingClientRect();
+    const mid = rect.top + rect.height / 2;
+    const dist = Math.abs(mid - focusCenter);
+    const t = Math.max(0, Math.min(1, 1 - dist / fadeSpan));
+    const eased = t * t * (3 - 2 * t);
+
+    p.style.opacity = 0.12 + eased * 0.88;
+    if (eased > 0.7) {
+      const s = (eased - 0.7) / 0.3;
+      const r = Math.floor(180 + 48 * s);
+      const g = Math.floor(160 + 39 * s);
+      const b = Math.floor(120 + 70 * s);
+      p.style.color = `rgb(${r}, ${g}, ${b})`;
+      p.style.textShadow = `0 0 ${6 + 10 * s}px rgba(200, 168, 78, ${0.08 + 0.37 * s})`;
+    } else {
+      p.style.color = '';
+      p.style.textShadow = '';
+    }
+  }
+
+  for (const d of storyDividers) {
+    const rect = d.getBoundingClientRect();
+    const mid = rect.top + rect.height / 2;
+    const dist = Math.abs(mid - focusCenter);
+    const t = Math.max(0, Math.min(1, 1 - dist / fadeSpan));
+    d.style.opacity = 0.08 + t * 0.52;
+  }
+}
+
+function updateParallaxAndCover() {
+  const vh = window.innerHeight;
+
+  /* cover fade */
+  const cover = document.getElementById('storyCover');
+  if (cover) {
+    const coverRect = cover.getBoundingClientRect();
+    const coverProgress = Math.max(0, Math.min(1, 1 - (coverRect.bottom / coverRect.height)));
+    cover.style.opacity = 1 - coverProgress * 0.85;
+    cover.style.transform = `translateY(${-coverProgress * 40}px)`;
+    const title = cover.querySelector('.story-title');
+    if (title) title.style.opacity = 1 - coverProgress * 0.9;
+  }
+
+  /* parallax: text glides up as user scrolls */
+  for (const st of document.querySelectorAll('.story-text')) {
+    const section = st.closest('.section');
+    const secRect = section.getBoundingClientRect();
+    const t = Math.max(0, Math.min(1, (vh - secRect.top) / vh));
+    const shift = (1 - t) * 80;
+    st.style.transform = `translateY(${shift}px)`;
+  }
+}
+
+let scrollRAF = null;
+scrollContainer.addEventListener('scroll', () => {
+  if (scrollRAF) return;
+  scrollRAF = requestAnimationFrame(() => {
+    updateActiveHOF();
+    updateTextDissolve();
+    updateParallaxAndCover();
+    scrollRAF = null;
+  });
+}, { passive: true });
+
+/* call once on load */
+updateTextDissolve();
+updateActiveHOF();
+updateParallaxAndCover();
+
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) {
+    updateActiveHOF();
+    updateTextDissolve();
+    updateParallaxAndCover();
+  }
+});
+
+/* ═══════════════════════════════════════════
+   GLOBAL KEYBOARD
+   ═══════════════════════════════════════════ */
+document.addEventListener('keydown', e => {
+  const activeHOF = allHOFs.find(h => h.active);
+  if (!activeHOF) return;
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') activeHOF.goTo(activeHOF.currentIdx + 1, 1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') activeHOF.goTo(activeHOF.currentIdx - 1, -1);
+});
+
+/* ═══════════════════════════════════════════
+   NEBULA + EFFECTS
+   ═══════════════════════════════════════════ */
 const canvas = document.getElementById('nebula');
 const ctx = canvas.getContext('2d');
 const cursorGlow = document.getElementById('cursorGlow');
 
-let currentIdx = 0;
-const cards = [];
-let transitioning = false;
-const isTouch = 'ontouchstart' in window;
-
-function createCard(i) {
-  const card = document.createElement('div');
-  card.className = 'card';
-  card.innerHTML = `
-    <div class="frame-wrap">
-      <div class="frame"></div>
-      <img src="pictures/${pictures[i]}.jpeg" alt="" loading="lazy">
-    </div>
-    <div class="inscription"><div class="line">${inscriptions[i]}</div></div>
-  `;
-  stage.appendChild(card);
-  cards.push(card);
-}
-
-for (let i = 0; i < pictures.length; i++) createCard(i);
-
-function updateCounter() {
-  counterEl.textContent = `${currentIdx + 1} / ${pictures.length}`;
-  counterEl.classList.add('pulse');
-  setTimeout(() => counterEl.classList.remove('pulse'), 400);
-}
-
-function goTo(targetIdx, dir) {
-  if (transitioning || targetIdx === currentIdx) return;
-  if (targetIdx < 0 || targetIdx >= pictures.length) return;
-  transitioning = true;
-
-  const oldCard = cards[currentIdx];
-  const newCard = cards[targetIdx];
-
-  oldCard.classList.remove('visible');
-  oldCard.classList.add(dir === 1 ? 'leaving-left' : 'leaving-right');
-
-  newCard.classList.remove('leaving-left', 'leaving-right', 'entering-left', 'entering-right');
-  newCard.classList.add(dir === 1 ? 'entering-right' : 'entering-left');
-
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      newCard.classList.remove('entering-left', 'entering-right');
-      newCard.classList.add('visible');
-    });
-  });
-
-  currentIdx = targetIdx;
-  updateCounter();
-  resetAutoplay();
-
-  setTimeout(() => {
-    oldCard.classList.remove('leaving-left', 'leaving-right');
-    transitioning = false;
-  }, 700);
-}
-
-cards[0].classList.add('visible');
-updateCounter();
-
-prevBtn.addEventListener('click', () => goTo(currentIdx - 1, -1));
-nextBtn.addEventListener('click', () => goTo(currentIdx + 1, 1));
-
-document.addEventListener('keydown', e => {
-  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(currentIdx + 1, 1);
-  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(currentIdx - 1, -1);
-});
-
-let wheelAccum = 0;
-let wheelTimer = null;
-document.addEventListener('wheel', e => {
-  e.preventDefault();
-  wheelAccum += e.deltaY + e.deltaX;
-  if (wheelTimer) clearTimeout(wheelTimer);
-  wheelTimer = setTimeout(() => {
-    if (Math.abs(wheelAccum) > 40) {
-      goTo(currentIdx + (wheelAccum > 0 ? 1 : -1), wheelAccum > 0 ? 1 : -1);
-    }
-    wheelAccum = 0;
-  }, 100);
-}, { passive: false });
-
-let touchStartX = 0;
-document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
-document.addEventListener('touchend', e => {
-  const diff = touchStartX - e.changedTouches[0].clientX;
-  if (Math.abs(diff) > 50) goTo(currentIdx + (diff > 0 ? 1 : -1), diff > 0 ? 1 : -1);
-});
-
-let autoplayTimer;
-function resetAutoplay() {
-  clearTimeout(autoplayTimer);
-  autoplayTimer = setTimeout(() => goTo(currentIdx + 1, 1), 8000);
-}
-resetAutoplay();
-
-// === NEBULA + EFFECTS ===
 let W, H;
 let stars = [], dust = [];
 let mouseTX = 0.5, mouseTY = 0.5;
@@ -469,6 +846,7 @@ let mouseSmoothX = 0.5, mouseSmoothY = 0.5;
 let time = 0;
 let targetTiltX = 0, targetTiltY = 0;
 let currentTiltX = 0, currentTiltY = 0;
+const isTouch = 'ontouchstart' in window;
 
 function resizeCanvas() {
   W = canvas.width = window.innerWidth;
@@ -510,10 +888,13 @@ function initDust() {
   }
 }
 
-
-
 resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
+window.addEventListener('resize', () => {
+  resizeCanvas();
+  updateTextDissolve();
+  updateActiveHOF();
+  updateParallaxAndCover();
+});
 
 document.addEventListener('mousemove', e => {
   mouseTX = e.clientX;
@@ -529,9 +910,6 @@ document.addEventListener('mouseleave', () => {
 document.addEventListener('mouseenter', () => {
   cursorGlow.style.opacity = '1';
 });
-
-
-
 
 function drawNebula() {
   ctx.fillStyle = 'rgba(8, 8, 5, 0.1)';
@@ -598,12 +976,13 @@ function drawNebula() {
       ctx.fill();
     }
   }
-
 }
 
 function updateCardTilt() {
-  if (isTouch || transitioning) return;
-  const card = cards[currentIdx];
+  if (isTouch) return;
+  const activeHOF = allHOFs.find(h => h.active);
+  if (!activeHOF) return;
+  const card = activeHOF.currentCard;
   if (!card || !card.classList.contains('visible')) return;
   const frameWrap = card.querySelector('.frame-wrap');
   if (!frameWrap) return;
@@ -629,13 +1008,16 @@ function animate(ts) {
   if (!isTouch) {
     currentTiltX += (targetTiltX - currentTiltX) * 0.07;
     currentTiltY += (targetTiltY - currentTiltY) * 0.07;
-    const card = cards[currentIdx];
-    if (card && card.classList.contains('visible')) {
-      const frameWrap = card.querySelector('.frame-wrap');
-      if (frameWrap) {
-        const floatY = Math.sin(time * 0.9) * 5;
-        frameWrap.style.transform =
-          `perspective(600px) rotateX(${currentTiltX.toFixed(2)}deg) rotateY(${currentTiltY.toFixed(2)}deg) translateY(${floatY.toFixed(1)}px)`;
+    const activeHOF = allHOFs.find(h => h.active);
+    if (activeHOF) {
+      const card = activeHOF.currentCard;
+      if (card && card.classList.contains('visible')) {
+        const frameWrap = card.querySelector('.frame-wrap');
+        if (frameWrap) {
+          const floatY = Math.sin(time * 0.9) * 5;
+          frameWrap.style.transform =
+            `perspective(600px) rotateX(${currentTiltX.toFixed(2)}deg) rotateY(${currentTiltY.toFixed(2)}deg) translateY(${floatY.toFixed(1)}px)`;
+        }
       }
     }
   }
